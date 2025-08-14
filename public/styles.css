@@ -34,6 +34,24 @@ header p {
     opacity: 0.9;
 }
 
+.info-note {
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-top: 15px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.info-note p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #856404;
+    text-align: center;
+}
+
 .controls {
     background: white;
     padding: 20px;
@@ -66,6 +84,40 @@ header p {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
+}
+
+/* Loading animation styles */
+.loading-row {
+    opacity: 0.7;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #2596be;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: #666;
+    font-style: italic;
 }
 
 .btn-primary {

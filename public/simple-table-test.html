@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Table Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+        .btn { padding: 8px 16px; margin: 2px; cursor: pointer; border: none; border-radius: 4px; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .domain-name { font-family: 'Courier New', monospace; }
+        .status-valid { color: #28a745; font-weight: bold; }
+        .status-invalid { color: #dc3545; font-weight: bold; }
+        .status-error { color: #ffc107; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 SSL Checker - Table Structure Test</h1>
+        <p>Test struktur table tanpa chart dan stats, dengan text "-" untuk pending state.</p>
+        
+        <div>
+            <button onclick="loadDomains()" class="btn btn-success">📋 Load Domains</button>
+            <button onclick="clearTable()" class="btn btn-warning">🗑️ Clear Table</button>
+        </div>
+        
+        <table id="domainTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Domain</th>
+                    <th>SSL Status</th>
+                    <th>SSL Issuer</th>
+                    <th>Organization</th>
+                    <th>Issued On</th>
+                    <th>Expires On</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Data akan diisi melalui JavaScript -->
+            </tbody>
+        </table>
+        
+        <div id="info" style="margin-top: 20px; padding: 15px; background: #e7f3ff; border-radius: 5px;">
+            <h3>📊 Struktur Table Baru:</h3>
+            <ul>
+                <li><strong>Kolom 1:</strong> No (nomor urut)</li>
+                <li><strong>Kolom 2:</strong> Nama Domain (dengan font Courier New)</li>
+                <li><strong>Kolom 3:</strong> SSL Status (Valid/No SSL/Error)</li>
+                <li><strong>Kolom 4:</strong> SSL Issuer (full issuer string)</li>
+                <li><strong>Kolom 5:</strong> Organization (extracted O value)</li>
+                <li><strong>Kolom 6:</strong> Issued On (tanggal issue)</li>
+                <li><strong>Kolom 7:</strong> Expires On (tanggal expired)</li>
+                <li><strong>Kolom 8:</strong> Aksi (tombol test)</li>
+            </ul>
+            <p><strong>Note:</strong> Semua kolom akan menampilkan "-" sebelum di-scan, bukan "Pending..."</p>
+        </div>
+    </div>
+
+    <script>
+        let domains = [];
+        
+        // Load domains from list.txt
+        async function loadDomainsFromFile() {
+            try {
+                const response = await fetch('list.txt');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch list.txt: ${response.status}`);
+                }
+                
+                const text = await response.text();
+                domains = text.trim().split('\n').filter(domain => domain.trim() !== '');
+                console.log(`Loaded ${domains.length} domains from list.txt`);
+                
+            } catch (error) {
+                console.error('Error loading domains from list.txt:', error);
+                
+                // Fallback to sample domains
+                domains = [
+                    'mekarjaya-arjasari.desa.id',
+                    'ancolmekar.desa.id',
+                    'patrolsari.desa.id',
+                    'pinggirsari.desa.id',
+                    'lebakwangi.desa.id'
+                ];
+                console.log(`Fallback: Using ${domains.length} sample domains`);
+            }
+        }
+        
+        async function loadDomains() {
+            // First load domains from file
+            await loadDomainsFromFile();
+            
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            domains.forEach((domain, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td class="domain-name">${domain}</td>
+                    <td class="ssl-status">-</td>
+                    <td class="ssl-issuer">-</td>
+                    <td class="ssl-organization">-</td>
+                    <td class="ssl-issued">-</td>
+                    <td class="ssl-expires">-</td>
+                    <td>
+                        <button class="btn btn-primary test-single" onclick="testDomain(${index})">
+                            🧪 Test
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            document.getElementById('info').innerHTML = `
+                <h3>✅ Table Loaded Successfully!</h3>
+                <p><strong>Total Domains:</strong> ${domains.length}</p>
+                <p><strong>Source:</strong> ${domains.length > 10 ? 'list.txt (270 domains)' : 'Sample domains (fallback)'}</p>
+                <p><strong>Pending State:</strong> Semua kolom menampilkan "-" (bukan "Pending...")</p>
+                <p><strong>Next Step:</strong> Klik tombol "🧪 Test" untuk test individual domain</p>
+            `;
+        }
+        
+        function testDomain(index) {
+            const row = document.querySelector(`#tableBody tr:nth-child(${index + 1})`);
+            const domain = domains[index];
+            
+            // Simulate SSL check result
+            const sslStatus = Math.random() > 0.3 ? 'Valid' : 'No SSL';
+            const sslIssuer = sslStatus === 'Valid' ? 
+                `Issuer: CN=WE${Math.floor(Math.random() * 10)},O=Google Trust Services,C=US` : 
+                'N/A';
+            const organization = sslStatus === 'Valid' ? 'Google Trust Services' : 'N/A';
+            const issuedOn = sslStatus === 'Valid' ? '08/07/2025' : 'N/A';
+            const expiresOn = sslStatus === 'Valid' ? '06/10/2025' : 'N/A';
+            
+            // Update row
+            row.children[2].textContent = sslStatus;
+            row.children[2].className = `ssl-status ${sslStatus === 'Valid' ? 'status-valid' : 'status-invalid'}`;
+            row.children[3].textContent = sslIssuer;
+            row.children[4].textContent = organization;
+            row.children[5].textContent = issuedOn;
+            row.children[6].textContent = expiresOn;
+            
+            // Disable test button
+            const testBtn = row.querySelector('.test-single');
+            testBtn.disabled = true;
+            testBtn.textContent = '✅ Done';
+            testBtn.className = 'btn btn-success';
+        }
+        
+        function clearTable() {
+            document.getElementById('tableBody').innerHTML = '';
+            document.getElementById('info').innerHTML = `
+                <h3>🗑️ Table Cleared!</h3>
+                <p>Klik "📋 Load Domains" untuk memuat ulang table.</p>
+            `;
+        }
+        
+        // Auto-load domains on page load
+        window.addEventListener('load', () => {
+            loadDomains();
+        });
+    </script>
+</body>
+</html>

@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SSL Checker - Domain Status</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -13,12 +12,13 @@
     <div class="container">
         <header>
             <h1>BedaSSL Checker</h1>
+
         </header>
 
         <div class="controls">
             <button id="checkAll" class="btn btn-success">🔍 Cek Semua SSL</button>
             <button id="stopCheck" class="btn btn-danger" style="display: none;">⏹️ Stop</button>
-            <button id="exportPDF" class="btn btn-secondary" style="display: none;">📄 Export PDF</button>
+
             <button id="clearResults" class="btn btn-warning">🗑️ Bersihkan Hasil</button>
             <div class="progress-container" id="progressContainer" style="display: none;">
                 <div class="progress-bar">
@@ -28,44 +28,11 @@
             </div>
         </div>
 
-        <div class="stats" id="stats" style="display: none;">
-            <div class="stat-item">
-                <span class="stat-label">Total Domain:</span>
-                <span class="stat-value" id="totalDomains">0</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">SSL Valid:</span>
-                <span class="stat-value" id="sslValid">0</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">SSL Invalid:</span>
-                <span class="stat-value" id="sslInvalid">0</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">HTTP Error:</span>
-                <span class="stat-value" id="httpError">0</span>
-            </div>
-        </div>
 
-        <div class="charts-container" id="chartsContainer" style="display: none;">
-            <div class="chart-section">
-                <h3>📊 Distribusi Status SSL</h3>
-                <div class="chart-wrapper">
-                    <canvas id="issuerPieChart"></canvas>
-                </div>
-            </div>
-            <div class="chart-section">
-                <h3>📈 Jumlah Domain per Status</h3>
-                <div class="chart-wrapper">
-                    <canvas id="issuerBarChart"></canvas>
-                </div>
-            </div>
-        </div>
 
         <div class="search-container">
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="🔍 Cari domain, status, atau issuer..." class="search-input">
-                <button id="clearSearch" class="btn btn-sm btn-warning">🗑️ Clear</button>
             </div>
             <div class="search-info">
                 <span id="searchResults">Menampilkan semua domain</span>
@@ -78,13 +45,12 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Domain</th>
-                        <th>HTTP Response Code</th>
                         <th>SSL Status</th>
                         <th>SSL Issuer</th>
                         <th>Organization</th>
                         <th>Issued On</th>
                         <th>Expires On</th>
-                        <th>Aksi</th>
+                        <th>Test</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -94,6 +60,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script-backend.js"></script>
 </body>
 </html>

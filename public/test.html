@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSL Checker Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .status-valid { color: green; }
+        .status-invalid { color: red; }
+        .status-error { color: orange; }
+        .btn { padding: 5px 10px; margin: 2px; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; border: none; }
+    </style>
+</head>
+<body>
+    <h1>SSL Checker Test - Single Domain</h1>
+    
+    <button id="testBtn" class="btn btn-primary">🧪 Test Domain</button>
+    <button id="clearBtn" class="btn btn-primary">🗑️ Clear</button>
+    
+    <table id="testTable">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Nama Domain</th>
+                <th>HTTP Response Code</th>
+                <th>SSL Status</th>
+                <th>SSL Issuer</th>
+                <th>Organization</th>
+                <th>Issued On</th>
+                <th>Expires On</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td class="domain-name">example.com</td>
+                <td class="http-status">Pending...</td>
+                <td class="ssl-status">Pending...</td>
+                <td class="ssl-issuer">Pending...</td>
+                <td class="ssl-organization">Pending...</td>
+                <td class="ssl-issued">Pending...</td>
+                <td class="ssl-expires">Pending...</td>
+                <td>
+                    <button class="btn btn-primary test-single" data-domain="example.com" data-index="0">
+                        🧪 Test
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div id="result" style="margin-top: 20px; padding: 10px; background: #f0f0f0;"></div>
+
+    <script>
+        class SSLTestChecker {
+            constructor() {
+                this.initializeEventListeners();
+            }
+
+            initializeEventListeners() {
+                document.getElementById('testBtn').addEventListener('click', () => this.testDomain());
+                document.getElementById('clearBtn').addEventListener('click', () => this.clearResults());
+                
+                document.querySelectorAll('.test-single').forEach(button => {
+                    button.addEventListener('click', async (e) => {
+                        const domain = e.target.dataset.domain;
+                        const index = parseInt(e.target.dataset.index);
+                        
+                        e.target.disabled = true;
+                        e.target.textContent = 'Checking...';
+                        
+                        await this.checkSingleDomain(index);
+                        
+                        e.target.disabled = false;
+                        e.target.textContent = '🧪 Test';
+                    });
+                });
+            }
+
+            async testDomain() {
+                const domain = 'example.com';
+                console.log(`Testing domain: ${domain}`);
+                
+                try {
+                    const response = await fetch(`http://localhost:3001/api/check-domain/${domain}`);
+                    if (!response.ok) {
+                        throw new Error(`Backend error: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    console.log(`Backend result:`, result);
+                    
+                    this.displayResult(result);
+                    
+                } catch (error) {
+                    console.error('Error testing domain:', error);
+                    document.getElementById('result').innerHTML = `<strong>Error:</strong> ${error.message}`;
+                }
+            }
+
+            async checkSingleDomain(index) {
+                const domain = 'example.com';
+                const row = document.querySelector(`#testTable tbody tr:nth-child(${index + 1})`);
+                
+                if (!row) return;
+                
+                try {
+                    console.log(`Checking domain: ${domain}`);
+                    
+                    const response = await fetch(`http://localhost:3001/api/check-domain/${domain}`);
+                    if (!response.ok) {
+                        throw new Error(`Backend error: ${response.status}`);
+                    }
+                    
+                    const result = await response.json();
+                    console.log(`Backend result for ${domain}:`, result);
+                    
+                    // Update HTTP status (kolom ke-3, index 2)
+                    const httpStatus = result.http.status;
+                    row.children[2].textContent = httpStatus;
+                    row.children[2].className = `http-status ${this.getStatusClass(httpStatus)}`;
+                    
+                    // Update SSL status and details
+                    if (result.ssl.hasSSL) {
+                        row.children[3].textContent = 'Valid';
+                        row.children[3].className = 'ssl-status status-valid';
+                        row.children[4].textContent = result.ssl.issuer || 'Unknown';
+                        row.children[5].textContent = result.ssl.organization || 'Unknown';
+                        row.children[6].textContent = result.ssl.issuedOn || 'Unknown';
+                        row.children[7].textContent = result.ssl.expiresOn || 'Unknown';
+                    } else {
+                        row.children[3].textContent = 'No SSL';
+                        row.children[3].className = 'ssl-status status-invalid';
+                        row.children[4].textContent = 'N/A';
+                        row.children[5].textContent = 'N/A';
+                        row.children[6].textContent = 'N/A';
+                        row.children[7].textContent = 'N/A';
+                    }
+                    
+                } catch (error) {
+                    console.error(`Error checking ${domain}:`, error);
+                    
+                    row.children[2].textContent = 'Error';
+                    row.children[2].className = 'http-status status-error';
+                    row.children[3].textContent = 'Error';
+                    row.children[3].className = 'ssl-status status-error';
+                    row.children[4].textContent = 'Error';
+                    row.children[5].textContent = 'Error';
+                    row.children[6].textContent = 'Error';
+                    row.children[7].textContent = 'Error';
+                }
+            }
+
+            getStatusClass(status) {
+                if (status.includes('HTTPS OK') || status.includes('HTTP OK') || status === 'Valid') {
+                    return 'status-valid';
+                } else if (status.includes('No SSL') || status.includes('Connection') || status.includes('DNS Error')) {
+                    return 'status-invalid';
+                } else if (status === 'Error') {
+                    return 'status-error';
+                } else {
+                    return 'status-pending';
+                }
+            }
+
+            displayResult(result) {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `
+                    <h3>Test Result:</h3>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+            }
+
+            clearResults() {
+                const row = document.querySelector('#testTable tbody tr');
+                row.children[2].textContent = 'Pending...';
+                row.children[2].className = 'http-status';
+                row.children[3].textContent = 'Pending...';
+                row.children[3].className = 'ssl-status';
+                row.children[4].textContent = 'Pending...';
+                row.children[5].textContent = 'Pending...';
+                row.children[6].textContent = 'Pending...';
+                row.children[7].textContent = 'Pending...';
+                
+                document.getElementById('result').innerHTML = '';
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new SSLTestChecker();
+        });
+    </script>
+</body>
+</html>

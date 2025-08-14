@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple SSL Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin: 10px 0; padding: 10px; border: 1px solid #ddd; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Simple SSL Checker Test</h1>
+    
+    <button onclick="testBackend()">🧪 Test Backend</button>
+    <button onclick="testDomain()">🌐 Test Domain</button>
+    <button onclick="clearResults()">🗑️ Clear</button>
+    
+    <div id="results"></div>
+
+    <script>
+        async function testBackend() {
+            try {
+                const response = await fetch('http://localhost:3001/api/health');
+                const data = await response.json();
+                
+                showResult('Backend Health Check', data, 'success');
+            } catch (error) {
+                showResult('Backend Health Check', { error: error.message }, 'error');
+            }
+        }
+
+        async function testDomain() {
+            try {
+                const response = await fetch('http://localhost:3001/api/check-domain/example.com');
+                const data = await response.json();
+                
+                showResult('Domain Check: example.com', data, 'success');
+            } catch (error) {
+                showResult('Domain Check: example.com', { error: error.message }, 'error');
+            }
+        }
+
+        function showResult(title, data, type) {
+            const resultsDiv = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `result ${type}`;
+            
+            resultDiv.innerHTML = `
+                <h3>${title}</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+            
+            resultsDiv.appendChild(resultDiv);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Test backend connection on page load
+        window.addEventListener('load', () => {
+            testBackend();
+        });
+    </script>
+</body>
+</html>

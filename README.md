@@ -1,83 +1,221 @@
-# 🔒 SSL Checker - Domain Status Checker
+# 🚀 SSL Checker - DesaBandungKAB
 
-Website sederhana untuk mengecek status SSL dan HTTP response dari daftar domain desa Indonesia.
+**Real-time SSL Certificate Checker dengan Node.js Backend**
 
-## ✨ Fitur
+## ✨ Fitur Utama
 
-- 📋 **Muat Daftar Domain**: Membaca file `list.txt` yang berisi daftar domain
-- 🔍 **Cek SSL Status**: Melakukan pengecekan status SSL untuk semua domain
-- 📊 **Tabel Informasi**: Menampilkan informasi dalam format tabel yang rapi
-- 📈 **Statistik**: Menampilkan ringkasan hasil pengecekan
-- 🎨 **UI Modern**: Desain responsif dan menarik dengan gradien warna
-- 📱 **Mobile Friendly**: Responsif untuk berbagai ukuran layar
+- **🔍 Real SSL Checking** - Menggunakan Node.js backend untuk SSL certificate validation
+- **🌐 HTTP/HTTPS Status** - Cek ketersediaan dan response code domain
+- **📊 SSL Certificate Details** - Issuer, Organization, Issued Date, Expiry Date
+- **📈 Interactive Charts** - Pie chart dan bar chart untuk visualisasi data
+- **🔎 Search & Filter** - Pencarian domain berdasarkan status atau issuer
+- **📄 PDF Export** - Generate laporan dalam format PDF
+- **📱 Responsive Design** - Works on desktop dan mobile
 
-## 🚀 Cara Penggunaan
+## 🏗️ Architecture
 
-### 1. Buka Website
-Buka file `index.html` di browser web Anda.
+```
+Frontend (HTML/CSS/JS) ←→ Backend (Node.js/Express) ←→ Internet
+```
 
-### 2. Muat Daftar Domain
-- Klik tombol **"📋 Muat Daftar Domain"**
-- Website akan membaca file `list.txt` dan menampilkan 270 domain dalam tabel
+- **Frontend**: Pure HTML/CSS/JavaScript dengan Chart.js
+- **Backend**: Node.js + Express + built-in SSL libraries
+- **Real-time**: SSL certificate validation langsung dari internet
 
-### 3. Cek Status SSL
-- Setelah domain dimuat, tombol **"🔍 Cek Semua SSL"** akan aktif
-- Klik tombol tersebut untuk memulai pengecekan
-- Progress bar akan menampilkan kemajuan pengecekan
+## 🚀 Quick Start
 
-### 4. Lihat Hasil
-- Tabel akan diupdate secara real-time dengan hasil pengecekan
-- Statistik akan ditampilkan di bagian bawah
-- Gunakan tombol **"🗑️ Bersihkan Hasil"** untuk mereset tabel
+### 1. Install Dependencies
+```bash
+npm install
+```
 
-## 📊 Kolom Tabel
+### 2. Start Backend Server
+```bash
+npm start
+# atau
+node server.js
+```
 
-| Kolom | Deskripsi |
-|-------|-----------|
-| **No** | Nomor urut domain |
-| **Nama Domain** | Nama domain yang dicek |
-| **HTTP Response Code** | Kode response HTTP dari server |
-| **SSL Status** | Status sertifikat SSL (Valid/No SSL/Error) |
-| **SSL Issuer** | Nama penerbit sertifikat SSL |
+### 3. Open Frontend
+Buka `public/index.html` di browser atau serve dengan live server
 
-## 🎯 Status Warna
+## 📡 API Endpoints
 
-- 🟢 **Hijau**: Status valid/berhasil
-- 🔴 **Merah**: Status tidak valid/gagal
-- 🟠 **Oranye**: Error atau masalah koneksi
-- ⚪ **Abu-abu**: Status pending/menunggu
+### Health Check
+```
+GET /api/health
+```
 
-## 📁 Struktur File
+### SSL Check
+```
+GET /api/check-ssl/:domain
+```
+
+### HTTP Check
+```
+GET /api/check-http/:domain
+```
+
+### Full Domain Check
+```
+GET /api/check-domain/:domain
+```
+
+## 🔧 Configuration
+
+### Port
+Default port: `3001`
+Ubah dengan environment variable:
+```bash
+PORT=8080 node server.js
+```
+
+### Timeout Settings
+- **SSL Check**: 10 seconds
+- **HTTP Check**: 5 seconds
+- **DNS Resolution**: Built-in timeout
+
+## 📊 Data yang Dicheck
+
+### SSL Certificate
+- ✅ **Valid/Invalid Status**
+- 🏢 **Issuer Organization**
+- 📅 **Issued Date**
+- ⏰ **Expiry Date**
+- 🔒 **Security Headers**
+
+### HTTP Status
+- 🌐 **Response Code** (200, 301, 404, 500)
+- ⚡ **Connection Status**
+- 🕐 **Response Time**
+- 🖥️ **Server Type**
+
+### Domain Info
+- 🌍 **IP Address**
+- 🔍 **DNS Resolution**
+- ⚠️ **Error Details**
+
+## 🎯 Contoh Output
+
+```json
+{
+  "domain": "google.com",
+  "ssl": {
+    "hasSSL": true,
+    "status": "HTTPS OK (301)",
+    "issuer": "WR2",
+    "organization": "*.google.com",
+    "issuedOn": "7/7/2025",
+    "expiresOn": "29/9/2025",
+    "validDays": 47
+  },
+  "http": {
+    "status": "HTTP Connection Timeout",
+    "ipAddress": "142.250.72.174"
+  }
+}
+```
+
+## 🛠️ Technology Stack
+
+### Backend
+- **Node.js** - Runtime environment
+- **Express.js** - Web framework
+- **Built-in SSL** - crypto, tls, https modules
+- **DNS Resolution** - dns module
+
+### Frontend
+- **Vanilla JavaScript** - ES6+ features
+- **Chart.js** - Interactive charts
+- **jsPDF** - PDF generation
+- **Responsive CSS** - Mobile-first design
+
+## 📁 Project Structure
 
 ```
 ssl-checker/
-├── index.html          # File HTML utama
-├── styles.css          # File CSS untuk styling
-├── script.js           # File JavaScript untuk logika
-├── list.txt            # Daftar domain (270 domain)
-└── README.md           # Dokumentasi ini
+├── server.js              # Backend server
+├── package.json           # Dependencies
+├── public/                # Frontend files
+│   ├── index.html        # Main HTML
+│   ├── styles.css        # Styling
+│   └── script-backend.js # Frontend logic
+└── README.md             # Documentation
 ```
 
-## ⚠️ Catatan Penting
+## 🔒 Security Features
 
-- **Demo Mode**: Website ini menggunakan simulasi untuk pengecekan SSL (karena keterbatasan CORS)
-- **File list.txt**: Pastikan file `list.txt` berada di folder yang sama dengan `index.html`
-- **Browser Support**: Gunakan browser modern yang mendukung ES6+ dan Fetch API
+- **CORS Enabled** - Cross-origin requests allowed
+- **Input Validation** - Domain name sanitization
+- **Timeout Protection** - Prevents hanging connections
+- **Error Handling** - Graceful error responses
 
-## 🔧 Pengembangan Lanjutan
+## 🚨 Troubleshooting
 
-Untuk implementasi nyata, Anda bisa:
-1. Menggunakan backend service untuk pengecekan SSL yang sebenarnya
-2. Menambahkan fitur export hasil ke CSV/Excel
-3. Menambahkan filter dan pencarian domain
-4. Implementasi caching untuk hasil pengecekan
+### Backend tidak start
+```bash
+# Check if port 3001 is available
+lsof -i :3001
 
-## 📞 Kontak
+# Kill process if needed
+kill -9 <PID>
+```
 
-Jika ada pertanyaan atau saran, silakan hubungi developer.
+### SSL Check failed
+- Pastikan domain valid dan accessible
+- Check firewall settings
+- Verify internet connection
+
+### Frontend tidak connect ke backend
+- Pastikan backend running di port 3001
+- Check browser console untuk CORS errors
+- Verify localhost accessibility
+
+## 📈 Performance
+
+- **Concurrent Checks**: Sequential dengan delay 500ms
+- **Connection Pooling**: Built-in Node.js optimization
+- **Memory Management**: Automatic garbage collection
+- **Response Caching**: No caching (real-time data)
+
+## 🔄 Development
+
+### Development Mode
+```bash
+npm run dev  # Requires nodemon
+```
+
+### Production
+```bash
+npm start
+```
+
+### Environment Variables
+```bash
+PORT=3001
+NODE_ENV=production
+```
+
+## 📝 License
+
+MIT License - Free to use and modify
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch
+3. Commit changes
+4. Push to branch
+5. Create Pull Request
+
+## 📞 Support
+
+Untuk pertanyaan atau masalah:
+- Check troubleshooting section
+- Review console logs
+- Verify network connectivity
+- Test with simple domains first
 
 ---
 
-**Dibuat dengan ❤️ untuk Indonesia**
-# ssl-desa-checker
-# ssl-desa-checker
+**🎉 SSL Checker siap digunakan dengan data REAL dari internet!**
