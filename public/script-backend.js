@@ -157,7 +157,7 @@ class SSLChecker {
             console.log(`Checking domain: ${domain}`);
             
             // Check both HTTP and SSL using backend API
-            const response = await fetch(`/ssl-desa-checker/api/check-domain/${domain}`);
+            const response = await fetch(`http://localhost:3001/api/check-domain/${domain}`);
             if (!response.ok) {
                 throw new Error(`Backend error: ${response.status}`);
             }
