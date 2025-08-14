@@ -1,26 +1,26 @@
-# 🚀 SSL Checker - DesaBandungKAB
+# 🚀 BedaSSL Checker
 
-**Real-time SSL Certificate Checker dengan Node.js Backend**
+**Real-time SSL Certificate Checker dengan Node.js Backend + OpenSSL**
 
 ## ✨ Fitur Utama
 
-- **🔍 Real SSL Checking** - Menggunakan Node.js backend untuk SSL certificate validation
-- **🌐 HTTP/HTTPS Status** - Cek ketersediaan dan response code domain
+- **🔍 Real SSL Checking** - Menggunakan Node.js backend + OpenSSL untuk SSL certificate validation
 - **📊 SSL Certificate Details** - Issuer, Organization, Issued Date, Expiry Date
-- **📈 Interactive Charts** - Pie chart dan bar chart untuk visualisasi data
 - **🔎 Search & Filter** - Pencarian domain berdasarkan status atau issuer
-- **📄 PDF Export** - Generate laporan dalam format PDF
 - **📱 Responsive Design** - Works on desktop dan mobile
+- **⚡ Lazy Loading** - Smooth loading animation dengan shimmer effect
+- **🔄 Progress Tracking** - Progress bar untuk batch SSL checking
+- **📋 270 Domains** - Load otomatis dari file list.txt
 
 ## 🏗️ Architecture
 
 ```
-Frontend (HTML/CSS/JS) ←→ Backend (Node.js/Express) ←→ Internet
+Frontend (HTML/CSS/JS) ←→ Backend (Node.js/Express + OpenSSL) ←→ Internet
 ```
 
-- **Frontend**: Pure HTML/CSS/JavaScript dengan Chart.js
-- **Backend**: Node.js + Express + built-in SSL libraries
-- **Real-time**: SSL certificate validation langsung dari internet
+- **Frontend**: Pure HTML/CSS/JavaScript dengan lazy loading
+- **Backend**: Node.js + Express + OpenSSL integration
+- **Real-time**: SSL certificate validation langsung dari internet dengan OpenSSL
 
 ## 🚀 Quick Start
 
@@ -46,20 +46,12 @@ Buka `public/index.html` di browser atau serve dengan live server
 GET /api/health
 ```
 
-### SSL Check
-```
-GET /api/check-ssl/:domain
-```
-
-### HTTP Check
-```
-GET /api/check-http/:domain
-```
-
-### Full Domain Check
+### Full Domain Check (Recommended)
 ```
 GET /api/check-domain/:domain
 ```
+
+**Returns**: Complete SSL certificate details including issuer, organization, dates
 
 ## 🔧 Configuration
 
@@ -77,23 +69,18 @@ PORT=8080 node server.js
 
 ## 📊 Data yang Dicheck
 
-### SSL Certificate
+### SSL Certificate (OpenSSL)
 - ✅ **Valid/Invalid Status**
-- 🏢 **Issuer Organization**
+- 🏢 **Issuer Organization** (extracted from O= field)
 - 📅 **Issued Date**
 - ⏰ **Expiry Date**
-- 🔒 **Security Headers**
+- 🔒 **Certificate Details** (via OpenSSL)
 
-### HTTP Status
-- 🌐 **Response Code** (200, 301, 404, 500)
-- ⚡ **Connection Status**
-- 🕐 **Response Time**
-- 🖥️ **Server Type**
-
-### Domain Info
-- 🌍 **IP Address**
-- 🔍 **DNS Resolution**
-- ⚠️ **Error Details**
+### Domain Processing
+- 📋 **270 Domains** - Loaded automatically from list.txt
+- 🔄 **Batch Processing** - Check all domains with progress tracking
+- ⚡ **Individual Testing** - Test single domain per row
+- 🎯 **Real-time Results** - Live SSL certificate validation
 
 ## 🎯 Contoh Output
 
@@ -102,16 +89,11 @@ PORT=8080 node server.js
   "domain": "google.com",
   "ssl": {
     "hasSSL": true,
-    "status": "HTTPS OK (301)",
-    "issuer": "WR2",
-    "organization": "*.google.com",
-    "issuedOn": "7/7/2025",
-    "expiresOn": "29/9/2025",
-    "validDays": 47
-  },
-  "http": {
-    "status": "HTTP Connection Timeout",
-    "ipAddress": "142.250.72.174"
+    "status": "Valid",
+    "issuer": "CN=WE1,O=Google Trust Services,C=US",
+    "organization": "Google Trust Services",
+    "issuedOn": "2025-01-15",
+    "expiresOn": "2025-04-15"
   }
 }
 ```
@@ -121,25 +103,26 @@ PORT=8080 node server.js
 ### Backend
 - **Node.js** - Runtime environment
 - **Express.js** - Web framework
-- **Built-in SSL** - crypto, tls, https modules
-- **DNS Resolution** - dns module
+- **OpenSSL Integration** - Real SSL certificate parsing
+- **Built-in SSL** - crypto, tls, https modules (fallback)
 
 ### Frontend
 - **Vanilla JavaScript** - ES6+ features
-- **Chart.js** - Interactive charts
-- **jsPDF** - PDF generation
+- **Lazy Loading** - Smooth loading animations
+- **Progress Tracking** - Real-time progress updates
 - **Responsive CSS** - Mobile-first design
 
 ## 📁 Project Structure
 
 ```
 ssl-checker/
-├── server.js              # Backend server
+├── server.js              # Backend server with OpenSSL
 ├── package.json           # Dependencies
+├── list.txt               # 270 domain list
 ├── public/                # Frontend files
 │   ├── index.html        # Main HTML
-│   ├── styles.css        # Styling
-│   └── script-backend.js # Frontend logic
+│   ├── styles.css        # Styling with loading animations
+│   └── script-backend.js # Frontend logic with lazy loading
 └── README.md             # Documentation
 ```
 
@@ -149,6 +132,7 @@ ssl-checker/
 - **Input Validation** - Domain name sanitization
 - **Timeout Protection** - Prevents hanging connections
 - **Error Handling** - Graceful error responses
+- **OpenSSL Integration** - Industry-standard SSL certificate validation
 
 ## 🚨 Troubleshooting
 
@@ -173,8 +157,9 @@ kill -9 <PID>
 
 ## 📈 Performance
 
-- **Concurrent Checks**: Sequential dengan delay 500ms
-- **Connection Pooling**: Built-in Node.js optimization
+- **Sequential Processing**: Check domains one by one with 500ms delay
+- **Lazy Loading**: Smooth loading animations for better UX
+- **Progress Tracking**: Real-time progress updates
 - **Memory Management**: Automatic garbage collection
 - **Response Caching**: No caching (real-time data)
 
@@ -216,6 +201,15 @@ Untuk pertanyaan atau masalah:
 - Verify network connectivity
 - Test with simple domains first
 
+## 🆕 Recent Updates
+
+- **🎯 Simplified UI** - Removed charts and PDF export for cleaner interface
+- **⚡ Lazy Loading** - Added smooth loading animations with shimmer effects
+- **🔄 Progress Tracking** - Real-time progress bar for batch operations
+- **📋 Auto Domain Loading** - 270 domains loaded automatically from list.txt
+- **🏢 Organization Extraction** - Automatic extraction of Organization (O) from SSL issuer
+- **🎨 Modern Design** - Clean, professional interface with blue color scheme
+
 ---
 
-**🎉 SSL Checker siap digunakan dengan data REAL dari internet!**
+**🎉 BedaSSL Checker siap digunakan dengan data REAL dari internet menggunakan OpenSSL!**
